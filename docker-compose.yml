@@ -1,0 +1,47 @@
+version: '3'
+services:
+  # centos7
+  workspace:
+      build: ./workspace
+      container_name: workspace
+      volumes:
+          - ./../projects:/var/www
+      tty: true
+  # nginx
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./../projects:/var/www
+      - ./web/logs:/var/log/httpd
+    restart: always
+    privileged: true
+    command: /sbin/init
+    depends_on:
+        - "php-fpm"
+  # php-fpm
+  php-fpm:
+      build: ./php-fpm
+      container_name: php-fpm
+      volumes:
+          - ./../projects:/var/www
+      restart: always
+      privileged: true
+      expose:
+          - "9000"
+      depends_on:
+          - "workspace"
+  db:
+    build: ./postgres
+    container_name: postgres
+    volumes:
+      - db:/var/lib/pgsql/11
+    ports:
+     - "5432:5432"
+    privileged: true
+    tty: true
+volumes:
+    db:

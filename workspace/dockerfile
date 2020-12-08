@@ -1,0 +1,17 @@
+FROM centos:7
+RUN yum update -y
+RUN yum clean all
+RUN yum install -y git
+RUN yum install -y sudo
+RUN yum install epel-release -y
+RUN rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+RUN yum -y install --enablerepo=remi-php73 php-fpm php-pgsql php-mbstring php-pecl-apcu php-pecl-igbinary php-pecl-memcache php-pecl-memcached php-pecl-msgpack php-process php-pecl-redis php-pecl-redis php-pecl-zip php-gd php-openssl php-xml unzip php
+RUN yum install -y autoconf
+RUN yum install -y --enablerepo=remi-php73 php-mcrypt
+RUN curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+RUN yum install  -y gcc-c++ make nodejs-10.15.0
+RUN curl -sS https://getcomposer.org/installer | php
+RUN yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+RUN yum install -y postgresql11
+COPY php.ini /etc/php.ini
+RUN mv composer.phar /usr/local/bin/composer
